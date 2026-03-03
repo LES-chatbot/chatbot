@@ -5,6 +5,11 @@ export default function FileManagerPage() {
     document.documentElement.classList.toggle("dark")
   }
 
+  function handleAddFile() {
+    // lógica para adicionar arquivo
+    console.log("Adicionar novo arquivo")
+  }
+
   return (
     <div className="min-h-screen p-8
       bg-white text-black
@@ -38,11 +43,21 @@ export default function FileManagerPage() {
         </div>
       </div>
 
+      {/* Botão adicionar arquivo */}
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={handleAddFile}
+          className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+        >
+          + Adicionar Arquivo
+        </button>
+      </div>
+
       <div className="rounded-xl border
         bg-neutral-100 border-neutral-300
         dark:bg-neutral-900 dark:border-neutral-800 divide-y dark:divide-neutral-800">
 
-        {["index.ts", "App.tsx", "api.ts"].map((file) => (
+        {["bhv_passe_profundidade.cpp", "planner.cpp", "strategy.cpp", "bhv_basic_move.cpp", "setplay.cpp", "setplay.h"].map((file) => (
           <div
             key={file}
             className="flex justify-between p-4 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition"
