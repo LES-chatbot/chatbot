@@ -4,7 +4,7 @@ import usuarioRoutes from "./routes/usuarioRoutes.js"
 
 const app = express()
 
-app.use(cors())              // ← permite acesso do React
+app.use(cors())
 app.use(express.json())
 
 app.use("/usuarios", usuarioRoutes)

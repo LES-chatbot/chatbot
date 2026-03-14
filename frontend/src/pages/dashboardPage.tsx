@@ -60,10 +60,10 @@ export default function DashboardPage() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold">
           Dashboard
+          {usuario && <span className="font-medium"> de {usuario.nome}</span>}
         </h1>
 
         <div className="flex items-center gap-4">
-          {usuario && <span className="font-medium">Olá, {usuario.nome}</span>}
           <button
             onClick={handleLogout}
             className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-400 transition"
