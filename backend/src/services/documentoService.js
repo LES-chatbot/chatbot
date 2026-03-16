@@ -113,6 +113,7 @@ export async function atualizarDocumento(iddocumento, dados) {
     for (const chunk of chunks) {
 
       await chunkRepository.criarChunk({
+        tipo: chunk.tipo,
         conteudo: chunk.conteudo,
         linha_ini: chunk.linha_ini,
         linha_fim: chunk.linha_fim,

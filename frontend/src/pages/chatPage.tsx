@@ -63,38 +63,20 @@ async function handleEnviarMensagem() {
     console.log("Conversa ativa antes de enviar:", idConversa);
     console.log("Mensagem que será enviada:", mensagemInput);
 
-    // 1️⃣ Se não há conversa ativa, iniciar a conversa "Nova conversa"
     if (!idConversa) {
-      console.log("Nenhuma conversa ativa, iniciando 'Nova conversa'...");
-
-      // Usando a função que cria ou retorna a conversa "Nova conversa"
       const nova = await iniciarNovaConversa(usuario.id);
-      console.log("Conversa 'Nova conversa' obtida:", nova);
-
-      // Seleciona a nova conversa como ativa
       idConversa = nova.idconversa;
       setConversaAtiva(idConversa);
-
-      // Atualiza sidebar e chat
       await carregarConversas(usuario.id);
       await carregarMensagens(idConversa);
-
     }
-
-    console.log("Enviando mensagem para conversa:", idConversa);
-
     const res = await enviarMensagem({
       conteudo: mensagemInput,
       idconversa: idConversa
     });
-
-    console.log("Mensagem enviada com sucesso:", res);
-
-    // Atualiza chat
     setMensagens(prev => [...prev, res.mensagem]);
     setMensagemInput("");
 
-    // Atualiza sidebar para refletir título atualizado, se necessário
     await carregarConversas(usuario.id);
 
   } catch (error) {
@@ -261,7 +243,7 @@ async function handleDeletarConversa(idconversa: number) {
                 }}
                 className="text-red-500 text-sm hover:underline hidden group-hover:block"
               >
-                deletar
+                Encerrar
               </button>
 
             </div>

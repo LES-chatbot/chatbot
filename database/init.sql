@@ -96,22 +96,22 @@ CREATE TABLE IF NOT EXISTS `chatbot`.`chunk` (
 
 
 -- -----------------------------------------------------
--- Table `chatbot`.`conversa`
+-- Table `chatbot`.`conversa` com campo ativo
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `chatbot`.`conversa` (
   `idconversa` INT NOT NULL AUTO_INCREMENT,
   `titulo` VARCHAR(45) NOT NULL,
   `data_criacao` DATE NOT NULL,
   `idusuario` INT NOT NULL,
+  `ativo` TINYINT(1) NOT NULL DEFAULT 1, -- 1 = ativo, 0 = inativo
   PRIMARY KEY (`idconversa`),
   INDEX `fk_conversa_usuario1_idx` (`idusuario` ASC) VISIBLE,
   CONSTRAINT `fk_conversa_usuario1`
     FOREIGN KEY (`idusuario`)
     REFERENCES `chatbot`.`usuario` (`idusuario`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+    ON UPDATE NO ACTION
+) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `chatbot`.`mensagem`

@@ -65,8 +65,6 @@ export async function atualizarConversa(idconversa, dados) {
 
 export async function deletarConversa(idconversa) {
 
-  await mensagemRepository.deletarMensagensPorConversa(idconversa);
-
   const linhasAfetadas =
     await conversaRepository.deletarConversa(idconversa);
 
@@ -94,29 +92,22 @@ export async function atualizarTituloSeNecessario(idconversa, conteudoMensagem) 
 }
 
 export async function iniciarNovaConversa(idusuario) {
-  if (!idusuario) {
-    throw new Error("Usuário é obrigatório");
-  }
-
   const titulo = "Nova conversa";
 
-  // 1️⃣ Busca se já existe uma conversa "Nova conversa" para este usuário
+  // Busca se já existe
   let conversa = await conversaRepository.buscarPorTituloUsuario(titulo, idusuario);
 
-  // 2️⃣ Se não existir, cria uma nova
   if (!conversa) {
-    const result = await conversaRepository.criarConversa(idusuario);
-
-    // o ID gerado pelo banco
-    const idconversa = result.insertId;
+    // Cria no banco e pega o ID retornado
+    const idconversa = await conversaRepository.criarConversa(idusuario);
 
     conversa = {
-      idconversa,
+      idconversa,  // ✅ aqui é essencial
       titulo,
-      idusuario
+      idusuario,
+      data_criacao: new Date().toISOString()
     };
   }
 
-  // 3️⃣ Retorna a conversa (existente ou recém-criada)
   return conversa;
 }
