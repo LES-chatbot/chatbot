@@ -1,31 +1,42 @@
 import * as mensagemRepository from "../repositories/mensagemRepository.js";
+import * as conversaService from "./conversaService.js";
 
-export async function enviarMensagem(conteudo, papel, idconversa) {
+export async function enviarMensagem(mensagem) {
 
-  if (!conteudo || !papel || !idconversa) {
-    throw new Error("Dados inválidos");
+  const { conteudo, idconversa } = mensagem;
+
+  if (!conteudo || conteudo.trim() === "") {
+    throw new Error("Conteúdo da mensagem é obrigatório");
   }
 
-  const id = await mensagemRepository.criarMensagem(
-    conteudo,
-    papel,
-    idconversa
-  );
+  if (!idconversa) {
+    throw new Error("Conversa é obrigatória");
+  }
 
-    await conversaService.atualizarTituloSeNecessario(idconversa, conteudo);
+  const idmensagem = await mensagemRepository.enviarMensagem({
+    conteudo,
+    idconversa
+  });
+  
+  await conversaService.atualizarTituloSeNecessario(idconversa, conteudo);
 
   return {
-    idmensagem: id,
+    idmensagem,
     conteudo,
-    papel,
-    idconversa
+    idconversa,
+    data: new Date().toISOString()
   };
 }
 
-export async function obterMensagens(idconversa) {
-  return await mensagemRepository.listarMensagens(idconversa);
-}
 
-export async function removerMensagem(idmensagem) {
-  await mensagemRepository.deletarMensagem(idmensagem);
+export async function listarMensagens(idconversa) {
+
+  if (!idconversa) {
+    throw new Error("Conversa é obrigatória");
+  }
+
+  const mensagens =
+    await mensagemRepository.listarMensagensPorConversa(idconversa);
+
+  return mensagens;
 }

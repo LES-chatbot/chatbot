@@ -1,58 +1,43 @@
 import { getDB } from "../config/database.js";
 
-export async function criarMensagem(mensagem) {
+// Enviar mensagem
+export async function enviarMensagem(mensagem) {
 
-  const { conteudo, papel, idconversa } = mensagem;
+  const { conteudo, idconversa } = mensagem;
 
   const db = await getDB();
 
   const [result] = await db.query(
-    `INSERT INTO mensagem (conteudo, papel, data_envio, idconversa)
-     VALUES (?, ?, NOW(), ?)`,
-    [conteudo, papel, idconversa]
+    `INSERT INTO mensagem (conteudo, data, idconversa)
+     VALUES (?, CURDATE(), ?)`,
+    [conteudo, idconversa]
   );
 
   return result.insertId;
 }
 
+
+// Listar mensagens de uma conversa
 export async function listarMensagensPorConversa(idconversa) {
 
   const db = await getDB();
 
   const [rows] = await db.query(
-    `SELECT *
-     FROM mensagem
+    `SELECT * 
+     FROM mensagem 
      WHERE idconversa = ?
-     ORDER BY data_envio ASC`,
+     ORDER BY idmensagem ASC`,
     [idconversa]
   );
 
   return rows;
 }
 
-export async function buscarMensagemPorId(idmensagem) {
-
+export async function deletarMensagensPorConversa(idconversa) {
   const db = await getDB();
-
-  const [rows] = await db.query(
-    `SELECT *
-     FROM mensagem
-     WHERE idmensagem = ?`,
-    [idmensagem]
-  );
-
-  return rows[0];
-}
-
-export async function deletarMensagem(idmensagem) {
-
-  const db = await getDB();
-
   const [result] = await db.query(
-    `DELETE FROM mensagem
-     WHERE idmensagem = ?`,
-    [idmensagem]
+    "DELETE FROM mensagem WHERE idconversa = ?",
+    [idconversa]
   );
-
   return result.affectedRows;
 }

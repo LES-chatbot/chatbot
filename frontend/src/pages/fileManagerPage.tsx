@@ -5,8 +5,8 @@ import {
   listarDocumentos,
   atualizarDocumento,
   deletarDocumento,
-} from "../services/documentService"
-import type { DocumentoResponse } from "../services/documentService"
+} from "../services/documentoService"
+import type { DocumentoResponse } from "../services/documentoService"
 import { updatePassword } from "../services/userService"
 
 export default function FileManagerPage() {

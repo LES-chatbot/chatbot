@@ -1,47 +1,53 @@
 import * as mensagemService from "../services/mensagemService.js";
 
 export async function enviar(req, res) {
+
+  const { conteudo, idconversa } = req.body;
+
+  if (!conteudo || !idconversa) {
+    return res.status(400).json({ erro: "Conteúdo e conversa são obrigatórios" });
+  }
+
   try {
 
-    const { conteudo, papel, idconversa } = req.body;
-
-    const mensagem = await mensagemService.enviarMensagem(
+    const mensagem = await mensagemService.enviarMensagem({
       conteudo,
-      papel,
       idconversa
-    );
+    });
 
-    res.status(201).json(mensagem);
+    res.status(201).json({
+      message: "Mensagem enviada com sucesso",
+      mensagem
+    });
 
-  } catch (err) {
-    res.status(400).json({ erro: err.message });
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({ erro: "Erro ao enviar mensagem" });
+
   }
+
 }
 
+
 export async function listar(req, res) {
+
+  const { idconversa } = req.params;
+
   try {
 
-    const { idconversa } = req.params;
-
-    const mensagens = await mensagemService.obterMensagens(idconversa);
+    const mensagens =
+      await mensagemService.listarMensagens(idconversa);
 
     res.json(mensagens);
 
-  } catch (err) {
-    res.status(500).json({ erro: err.message });
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({ erro: "Erro ao listar mensagens" });
+
   }
-}
 
-export async function deletar(req, res) {
-  try {
-
-    const { id } = req.params;
-
-    await mensagemService.removerMensagem(id);
-
-    res.json({ mensagem: "Mensagem removida" });
-
-  } catch (err) {
-    res.status(500).json({ erro: err.message });
-  }
 }

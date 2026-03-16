@@ -16,7 +16,7 @@ export async function criarDocumento(documento) {
 export async function listarDocumentosPorUsuario(idusuario) {
   const db = await getDB();
   const [rows] = await db.query(
-    "SELECT * FROM documento WHERE idusuario = ? ORDER BY data_att DESC",
+    "SELECT * FROM documento WHERE idusuario = ? ORDER BY data_att DESC, titulo ASC",
     [idusuario]
   );
   return rows;

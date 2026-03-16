@@ -1,10 +1,12 @@
 import { getDB } from "../config/database.js";
 
-export async function criarConversa(titulo, idusuario) {
+export async function criarConversa(idusuario) {
 
   const db = await getDB();
 
-  const [result] = await db.execute(
+  const titulo = "Nova conversa";
+
+  const [result] = await db.query(
     `INSERT INTO conversa (titulo, data_criacao, idusuario)
      VALUES (?, CURDATE(), ?)`,
     [titulo, idusuario]
@@ -17,9 +19,8 @@ export async function listarConversasPorUsuario(idusuario) {
 
   const db = await getDB();
 
-  const [rows] = await db.execute(
-    `SELECT *
-     FROM conversa
+  const [rows] = await db.query(
+    `SELECT * FROM conversa
      WHERE idusuario = ?
      ORDER BY data_criacao DESC`,
     [idusuario]
@@ -32,9 +33,8 @@ export async function buscarConversaPorId(idconversa) {
 
   const db = await getDB();
 
-  const [rows] = await db.execute(
-    `SELECT *
-     FROM conversa
+  const [rows] = await db.query(
+    `SELECT * FROM conversa
      WHERE idconversa = ?`,
     [idconversa]
   );
@@ -42,11 +42,27 @@ export async function buscarConversaPorId(idconversa) {
   return rows[0];
 }
 
+export async function atualizarConversa(idconversa, dados) {
+
+  const db = await getDB();
+
+  const { titulo } = dados;
+
+  const [result] = await db.query(
+    `UPDATE conversa
+     SET titulo = ?
+     WHERE idconversa = ?`,
+    [titulo, idconversa]
+  );
+
+  return result.affectedRows;
+}
+
 export async function deletarConversa(idconversa) {
 
   const db = await getDB();
 
-  const [result] = await db.execute(
+  const [result] = await db.query(
     `DELETE FROM conversa
      WHERE idconversa = ?`,
     [idconversa]
@@ -55,14 +71,15 @@ export async function deletarConversa(idconversa) {
   return result.affectedRows;
 }
 
-export async function atualizarTitulo(idconversa, titulo) {
-
+export async function buscarPorTituloUsuario(titulo, idusuario) {
   const db = await getDB();
 
-  await db.execute(
-    `UPDATE conversa
-     SET titulo = ?
-     WHERE idconversa = ?`,
-    [titulo, idconversa]
+  const [rows] = await db.query(
+    `SELECT * FROM conversa 
+     WHERE titulo = ? AND idusuario = ? 
+     LIMIT 1`,
+    [titulo, idusuario]
   );
+
+  return rows[0] || null;
 }

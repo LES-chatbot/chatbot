@@ -1,45 +1,43 @@
-const API = "http://localhost:3000/mensagens";
+export interface MensagemData {
+  conteudo: string;
+  idconversa: number;
+}
 
-export async function enviarMensagem(idconversa: number, conteudo: string) {
+export interface MensagemResponse {
+  idmensagem: number;
+  conteudo: string;
+  data: string;
+  idconversa: number;
+}
 
-  const res = await fetch(API, {
+// Enviar mensagem
+export async function enviarMensagem(data: MensagemData): Promise<{ message: string; mensagem: MensagemResponse }> {
+
+  const response = await fetch("http://localhost:3000/mensagens", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      idconversa,
-      conteudo
-    })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    throw new Error("Erro ao enviar mensagem");
+  const responseData = await response.json();
+
+  if (!response.ok) {
+    throw new Error(responseData.erro || "Erro ao enviar mensagem");
   }
 
-  return await res.json();
+  return responseData;
 }
 
-export async function listarMensagens(idconversa: number) {
+// Listar mensagens da conversa
+export async function listarMensagens(idconversa: number): Promise<MensagemResponse[]> {
 
-  const res = await fetch(`${API}/${idconversa}`);
+  const response = await fetch(`http://localhost:3000/mensagens/${idconversa}`);
 
-  if (!res.ok) {
-    throw new Error("Erro ao listar mensagens");
+  const responseData = await response.json();
+
+  if (!response.ok) {
+    throw new Error(responseData.erro || "Erro ao listar mensagens");
   }
 
-  return await res.json();
-}
-
-export async function deletarMensagem(id: number) {
-
-  const res = await fetch(`${API}/${id}`, {
-    method: "DELETE"
-  });
-
-  if (!res.ok) {
-    throw new Error("Erro ao deletar mensagem");
-  }
-
-  return await res.json();
+  return responseData;
 }
