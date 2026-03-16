@@ -4,7 +4,8 @@ import usuarioRoutes from "./routes/usuarioRoutes.js"
 import documentoRouter from "./routes/documentoRoutes.js"
 import mensagemRoutes from "./routes/mensagemRoutes.js"
 import conversaRoutes from "./routes/conversaRoutes.js"
-import dashboardRoutes from "./routes/dashboardRoutes.js" // <-- Importa dashboard
+import dashboardRoutes from "./routes/dashboardRoutes.js" 
+import respostaRoutes from "./routes/respostaRoute.js" 
 
 const app = express()
 
@@ -16,6 +17,7 @@ app.use("/conversas", conversaRoutes)
 app.use("/mensagens", mensagemRoutes)
 app.use("/usuarios", usuarioRoutes)
 app.use("/documentos", documentoRouter)
-app.use("/dashboard", dashboardRoutes) // <-- Usa rotas do dashboard
+app.use("/dashboard", dashboardRoutes) 
+app.use("/respostas", respostaRoutes) 
 
 export default app

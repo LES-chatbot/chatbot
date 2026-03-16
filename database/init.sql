@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS `chatbot`.`conversa` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `chatbot`.`mensagem` (
   `idmensagem` INT NOT NULL AUTO_INCREMENT,
-  `conteudo` VARCHAR(45) NOT NULL,
+  `conteudo` LONGTEXT NOT NULL,
   `data` DATE NOT NULL,
   `idconversa` INT NOT NULL,
   PRIMARY KEY (`idmensagem`),
@@ -136,8 +136,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `chatbot`.`mensagem_processada` (
   `idmensagem_processada` INT NOT NULL AUTO_INCREMENT,
-  `conteudo` VARCHAR(45) NOT NULL,
-  `tempo` INT NOT NULL,
+  `conteudo` LONGTEXT NOT NULL,
   `intencao` VARCHAR(45) NOT NULL,
   `entidades` VARCHAR(45) NOT NULL,
   `idmensagem` INT NOT NULL,
@@ -156,7 +155,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `chatbot`.`resposta` (
   `idresposta` INT NOT NULL AUTO_INCREMENT,
-  `conteudo` VARCHAR(45) NOT NULL,
+  `conteudo` LONGTEXT NOT NULL,
   `data` DATE NOT NULL,
   `avaliacao` INT NULL,
   `idmensagem_processada` INT NOT NULL,
