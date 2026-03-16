@@ -1,52 +1,142 @@
 import * as documentoRepository from "../repositories/documentoRepository.js";
+import { formatCpp } from "./formatterService.js";
+import { splitIntoChunks } from "./chunkService.js";
+import * as chunkRepository from "../repositories/chunkRepository.js";
 
 // Lista de extensões permitidas
 const EXTENSOES_PERMITIDAS = ["cpp", "h", "js", "ts", "py", "java", "txt", "in", "sh"];
 
 export async function cadastrarDocumento(documento) {
-  const { titulo, linguagem, idusuario } = documento;
+  let { titulo, linguagem, conteudo, idusuario } = documento;
 
-  // Valida extensão
+  // valida extensão
   if (!EXTENSOES_PERMITIDAS.includes(linguagem.toLowerCase())) {
-    throw new Error(`Extensão .${linguagem} não permitida. Apenas: ${EXTENSOES_PERMITIDAS.join(", ")}`);
+    throw new Error(
+      `Extensão .${linguagem} não permitida. Apenas: ${EXTENSOES_PERMITIDAS.join(", ")}`
+    );
   }
 
-  // Verifica se já existe documento com mesmo título e linguagem
-  const documentosExistentes = await documentoRepository.listarDocumentosPorUsuario(idusuario);
+  // 1️⃣ formatar código
+  if (linguagem === "cpp" || linguagem === "h") {
+    conteudo = await formatCpp(conteudo);
+    documento.conteudo = conteudo;
+  }
+
+  // verifica se documento já existe
+  const documentosExistentes =
+    await documentoRepository.listarDocumentosPorUsuario(idusuario);
+
   const docExistente = documentosExistentes.find(
     (d) => d.titulo === titulo && d.linguagem === linguagem
   );
 
+  let iddocumento;
+
   if (docExistente) {
-    // Substitui o documento existente
-    await documentoRepository.atualizarDocumento(docExistente.iddocumento, documento);
-    return docExistente.iddocumento;
+
+    // atualizar documento existente
+    await documentoRepository.atualizarDocumento(
+      docExistente.iddocumento,
+      documento
+    );
+
+    iddocumento = docExistente.iddocumento;
+
+    // apagar chunks antigos
+    await chunkRepository.deletarChunksPorDocumento(iddocumento);
+
   } else {
-    // Cria um novo documento
-    return await documentoRepository.criarDocumento(documento);
+
+    // criar documento novo
+    iddocumento = await documentoRepository.criarDocumento(documento);
+
   }
+
+  const chunks = splitIntoChunks(conteudo, linguagem);
+
+  for (const chunk of chunks) {
+
+    await chunkRepository.criarChunk({
+      tipo: chunk.tipo,
+      conteudo: chunk.conteudo,
+      linha_ini: chunk.linha_ini,
+      linha_fim: chunk.linha_fim,
+      iddocumento
+    });
+
+  }
+
+  return iddocumento;
 }
 
 export async function listarDocumentos(idusuario) {
   return await documentoRepository.listarDocumentosPorUsuario(idusuario);
 }
-
 export async function atualizarDocumento(iddocumento, dados) {
-  const { linguagem } = dados;
 
-  // Valida extensão ao atualizar
-  if (linguagem && !EXTENSOES_PERMITIDAS.includes(linguagem.toLowerCase())) {
-    throw new Error(`Extensão .${linguagem} não permitida. Apenas: ${EXTENSOES_PERMITIDAS.join(", ")}`);
+  let { linguagem, conteudo } = dados;
+
+  // validar extensão
+  if (linguagem &&
+      !EXTENSOES_PERMITIDAS.includes(linguagem.toLowerCase())) {
+
+    throw new Error(
+      `Extensão .${linguagem} não permitida. Apenas: ${EXTENSOES_PERMITIDAS.join(", ")}`
+    );
   }
 
-  const linhasAfetadas = await documentoRepository.atualizarDocumento(iddocumento, dados);
-  if (linhasAfetadas === 0) throw new Error("Documento não encontrado");
+  // formatar código se necessário
+  if (conteudo && linguagem &&
+      ["cpp", "h"].includes(linguagem.toLowerCase())) {
+
+    console.log("Formatando código C++ na atualização...");
+
+    conteudo = await formatCpp(conteudo);
+
+    dados.conteudo = conteudo;
+  }
+
+  // atualizar documento
+  const linhasAfetadas =
+    await documentoRepository.atualizarDocumento(iddocumento, dados);
+
+  if (linhasAfetadas === 0)
+    throw new Error("Documento não encontrado");
+
+  // recriar chunks
+  if (conteudo) {
+
+    await chunkRepository.deletarChunksPorDocumento(iddocumento);
+
+    const chunks = splitIntoChunks(conteudo, linguagem);
+
+    for (const chunk of chunks) {
+
+      await chunkRepository.criarChunk({
+        conteudo: chunk.conteudo,
+        linha_ini: chunk.linha_ini,
+        linha_fim: chunk.linha_fim,
+        iddocumento
+      });
+
+    }
+
+  }
+
   return true;
 }
 
 export async function deletarDocumento(iddocumento) {
-  const linhasAfetadas = await documentoRepository.deletarDocumento(iddocumento);
-  if (linhasAfetadas === 0) throw new Error("Documento não encontrado");
+
+  // apagar chunks primeiro
+  await chunkRepository.deletarChunksPorDocumento(iddocumento);
+
+  const linhasAfetadas =
+    await documentoRepository.deletarDocumento(iddocumento);
+
+  if (linhasAfetadas === 0)
+    throw new Error("Documento não encontrado");
+
   return true;
 }
 
