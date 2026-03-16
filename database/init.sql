@@ -50,41 +50,68 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `chatbot`.`func`
+-- Table `chatbot`.`chunk`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `chatbot`.`func` (
-  `idfunc` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `chatbot`.`chunk` (
+  `idchunk` INT NOT NULL AUTO_INCREMENT,
+
+  `tipo` ENUM(
+    'include',
+    'namespace',
+    'class',
+    'struct',
+    'enum',
+    'function',
+    'method',
+    'constructor',
+    'destructor',
+    'macro',
+    'typedef',
+    'global_variable',
+    'comment',
+    'other'
+  ) NOT NULL DEFAULT 'other',
+
   `conteudo` LONGTEXT NOT NULL,
+
   `linha_ini` INT NOT NULL,
   `linha_fim` INT NOT NULL,
+
   `iddocumento` INT NOT NULL,
-  PRIMARY KEY (`idfunc`),
-  INDEX `fk_func_documento1_idx` (`iddocumento` ASC) VISIBLE,
-  CONSTRAINT `fk_func_documento1`
+
+  PRIMARY KEY (`idchunk`),
+
+  INDEX `idx_chunk_tipo` (`tipo`),
+  INDEX `idx_chunk_linhas` (`linha_ini`, `linha_fim`),
+
+  INDEX `fk_chunk_documento1_idx` (`iddocumento` ASC) VISIBLE,
+
+  CONSTRAINT `fk_chunk_documento1`
     FOREIGN KEY (`iddocumento`)
     REFERENCES `chatbot`.`documento` (`iddocumento`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+
+) ENGINE=InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `chatbot`.`conversa`
+-- Table `chatbot`.`conversa` com campo ativo
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `chatbot`.`conversa` (
   `idconversa` INT NOT NULL AUTO_INCREMENT,
   `titulo` VARCHAR(45) NOT NULL,
   `data_criacao` DATE NOT NULL,
   `idusuario` INT NOT NULL,
+  `ativo` TINYINT(1) NOT NULL DEFAULT 1, -- 1 = ativo, 0 = inativo
   PRIMARY KEY (`idconversa`),
   INDEX `fk_conversa_usuario1_idx` (`idusuario` ASC) VISIBLE,
   CONSTRAINT `fk_conversa_usuario1`
     FOREIGN KEY (`idusuario`)
     REFERENCES `chatbot`.`usuario` (`idusuario`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+    ON UPDATE NO ACTION
+) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `chatbot`.`mensagem`
@@ -144,20 +171,20 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `chatbot`.`func_has_resposta`
+-- Table `chatbot`.`chunk_has_resposta`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `chatbot`.`func_has_resposta` (
-  `idfunc` INT NOT NULL,
+CREATE TABLE IF NOT EXISTS `chatbot`.`chunk_has_resposta` (
+  `idchunk` INT NOT NULL,
   `idresposta` INT NOT NULL,
-  PRIMARY KEY (`idfunc`, `idresposta`),
-  INDEX `fk_func_has_resposta_resposta1_idx` (`idresposta` ASC) VISIBLE,
-  INDEX `fk_func_has_resposta_func1_idx` (`idfunc` ASC) VISIBLE,
-  CONSTRAINT `fk_func_has_resposta_func1`
-    FOREIGN KEY (`idfunc`)
-    REFERENCES `chatbot`.`func` (`idfunc`)
+  PRIMARY KEY (`idchunk`, `idresposta`),
+  INDEX `fk_chunk_has_resposta_resposta1_idx` (`idresposta` ASC) VISIBLE,
+  INDEX `fk_chunk_has_resposta_chunk1_idx` (`idchunk` ASC) VISIBLE,
+  CONSTRAINT `fk_chunk_has_resposta_chunk1`
+    FOREIGN KEY (`idchunk`)
+    REFERENCES `chatbot`.`chunk` (`idchunk`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_func_has_resposta_resposta1`
+  CONSTRAINT `fk_chunk_has_resposta_resposta1`
     FOREIGN KEY (`idresposta`)
     REFERENCES `chatbot`.`resposta` (`idresposta`)
     ON DELETE NO ACTION

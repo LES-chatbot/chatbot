@@ -16,19 +16,21 @@ export async function criarDocumento(documento) {
 export async function listarDocumentosPorUsuario(idusuario) {
   const db = await getDB();
   const [rows] = await db.query(
-    "SELECT * FROM documento WHERE idusuario = ? ORDER BY data_att DESC",
+    "SELECT * FROM documento WHERE idusuario = ? ORDER BY data_att DESC, titulo ASC",
     [idusuario]
   );
   return rows;
 }
 
 export async function atualizarDocumento(iddocumento, dados) {
-  const { titulo, linguagem, conteudo } = dados;
+
   const db = await getDB();
+
+  const { titulo, linguagem, conteudo } = dados;
 
   const [result] = await db.query(
     `UPDATE documento
-     SET titulo = ?, linguagem = ?, conteudo = ?, data_att = CURDATE()
+     SET titulo = ?, linguagem = ?, conteudo = ?, data_att = NOW()
      WHERE iddocumento = ?`,
     [titulo, linguagem, conteudo, iddocumento]
   );
@@ -37,10 +39,11 @@ export async function atualizarDocumento(iddocumento, dados) {
 }
 
 export async function deletarDocumento(iddocumento) {
+
   const db = await getDB();
 
   const [result] = await db.query(
-    "DELETE FROM documento WHERE iddocumento = ?",
+    `DELETE FROM documento WHERE iddocumento = ?`,
     [iddocumento]
   );
 
