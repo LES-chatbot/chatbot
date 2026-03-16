@@ -1,8 +1,8 @@
 import * as mensagemRepository from "../repositories/mensagemRepository.js";
 import * as conversaService from "./conversaService.js";
+import * as mensagemProcessadaService from "./mensagemProcessadaService.js";
 
 export async function enviarMensagem(mensagem) {
-
   const { conteudo, idconversa } = mensagem;
 
   if (!conteudo || conteudo.trim() === "") {
@@ -13,21 +13,30 @@ export async function enviarMensagem(mensagem) {
     throw new Error("Conversa é obrigatória");
   }
 
+  // 1️⃣ Salva a mensagem original
   const idmensagem = await mensagemRepository.enviarMensagem({
     conteudo,
     idconversa
   });
-  
+
+  // 2️⃣ Atualiza título da conversa se necessário
   await conversaService.atualizarTituloSeNecessario(idconversa, conteudo);
 
+  // 3️⃣ Pré-processa e salva a mensagem processada
+  const idmensagemProcessada = await mensagemProcessadaService.cadastrarMensagemProcessada({
+    conteudo,
+    idmensagem
+  });
+
+  // 4️⃣ Retorna os dados
   return {
     idmensagem,
+    idmensagemProcessada,
     conteudo,
     idconversa,
     data: new Date().toISOString()
   };
 }
-
 
 export async function listarMensagens(idconversa) {
 
