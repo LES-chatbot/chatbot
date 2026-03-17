@@ -1,8 +1,6 @@
 import * as dashboardService from "../services/dashboardService.js"
 
 
-
-// ----------------- ESTATÍSTICAS -----------------
 export async function getEstatisticas(req, res) {
   const { idusuario } = req.params
 
@@ -22,7 +20,6 @@ export async function getEstatisticas(req, res) {
   }
 }
 
-// ----------------- GRÁFICOS -----------------
 export async function getPerguntasPorDia(req, res) {
   const { idusuario } = req.params
   try {

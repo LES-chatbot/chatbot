@@ -2,13 +2,11 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Função que simula a IA e gera uma resposta
 def gerar_resposta(mensagem_processada):
     conteudo = mensagem_processada.get("conteudo", "")
     intencao = mensagem_processada.get("intencao", "desconhecida")
     entidades = mensagem_processada.get("entidades", "")
     
-    # Simulação simples de resposta
     resposta_texto = f"Entendi sua mensagem: '{conteudo}'. Intenção: {intencao}. Entidades: {entidades}"
     return resposta_texto
 
@@ -23,18 +21,16 @@ def processar_mensagem():
     if not idmensagem_processada or not conteudo:
         return jsonify({"erro": "idmensagemProcessada e conteudo são obrigatórios"}), 400
 
-    # Gerar resposta
     resposta_texto = gerar_resposta({
         "conteudo": conteudo,
         "intencao": intencao,
         "entidades": entidades
     })
 
-    # Retornar JSON sem salvar no banco
     return jsonify({
-        "idresposta": None,  # será gerado pelo Node
+        "idresposta": None,  
         "conteudo": resposta_texto,
-        "data": None,         # será preenchido pelo Node
+        "data": None,         
         "idmensagemProcessada": idmensagem_processada
     })
 

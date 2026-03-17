@@ -13,7 +13,6 @@ export async function criarConversa(idusuario) {
   return result.insertId;
 }
 
-// Listar apenas conversas ativas do usuário
 export async function listarConversasPorUsuario(idusuario) {
   const db = await getDB();
 
@@ -27,7 +26,6 @@ export async function listarConversasPorUsuario(idusuario) {
   return rows;
 }
 
-// Buscar conversa ativa por ID
 export async function buscarConversaPorId(idconversa) {
   const db = await getDB();
 
@@ -40,7 +38,6 @@ export async function buscarConversaPorId(idconversa) {
   return rows[0] || null;
 }
 
-// Atualizar conversa (apenas se estiver ativa)
 export async function atualizarConversa(idconversa, dados) {
   const db = await getDB();
   const { titulo } = dados;
@@ -55,7 +52,6 @@ export async function atualizarConversa(idconversa, dados) {
   return result.affectedRows;
 }
 
-// Soft delete (marcar inativo)
 export async function deletarConversa(idconversa) {
   const db = await getDB();
 
@@ -69,7 +65,6 @@ export async function deletarConversa(idconversa) {
   return result.affectedRows;
 }
 
-// Buscar por título (apenas se ativo)
 export async function buscarPorTituloUsuario(titulo, idusuario) {
   const db = await getDB();
 

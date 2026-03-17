@@ -1,6 +1,5 @@
 import { getDB } from "../config/database.js";
 
-// Enviar mensagem
 export async function enviarMensagem(mensagem) {
 
   const { conteudo, idconversa } = mensagem;
@@ -16,8 +15,6 @@ export async function enviarMensagem(mensagem) {
   return result.insertId;
 }
 
-
-// Listar mensagens de uma conversa
 export async function listarMensagensPorConversa(idconversa) {
 
   const db = await getDB();

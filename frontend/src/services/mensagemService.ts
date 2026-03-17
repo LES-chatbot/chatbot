@@ -10,7 +10,6 @@ export interface MensagemResponse {
   idconversa: number;
 }
 
-// Enviar mensagem
 export async function enviarMensagem(data: MensagemData): Promise<{ message: string; mensagem: MensagemResponse }> {
 
   const response = await fetch("http://localhost:3000/mensagens", {
@@ -28,7 +27,6 @@ export async function enviarMensagem(data: MensagemData): Promise<{ message: str
   return responseData;
 }
 
-// Listar mensagens da conversa
 export async function listarMensagens(idconversa: number): Promise<MensagemResponse[]> {
 
   const response = await fetch(`http://localhost:3000/mensagens/${idconversa}`);

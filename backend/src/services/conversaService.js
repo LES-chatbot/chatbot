@@ -1,7 +1,4 @@
 import * as conversaRepository from "../repositories/conversaRepository.js";
-import * as mensagemRepository from "../repositories/mensagemRepository.js"
-
-
 
 export async function criarConversa(idusuario) {
 
@@ -76,16 +73,13 @@ export async function deletarConversa(idconversa) {
 }
 
 export async function atualizarTituloSeNecessario(idconversa, conteudoMensagem) {
-  // Busca a conversa
   const conversa = await conversaRepository.buscarConversaPorId(idconversa);
 
   if (!conversa) {
     throw new Error("Conversa não encontrada");
   }
 
-  // Se o título ainda for "Nova conversa", atualiza
   if (conversa.titulo === "Nova conversa") {
-    // Pega os primeiros 15 caracteres da mensagem
     const novoTitulo = conteudoMensagem.substring(0, 15);
     await conversaRepository.atualizarConversa(idconversa, { titulo: novoTitulo });
   }
@@ -94,15 +88,13 @@ export async function atualizarTituloSeNecessario(idconversa, conteudoMensagem) 
 export async function iniciarNovaConversa(idusuario) {
   const titulo = "Nova conversa";
 
-  // Busca se já existe
   let conversa = await conversaRepository.buscarPorTituloUsuario(titulo, idusuario);
 
   if (!conversa) {
-    // Cria no banco e pega o ID retornado
     const idconversa = await conversaRepository.criarConversa(idusuario);
 
     conversa = {
-      idconversa,  // ✅ aqui é essencial
+      idconversa,
       titulo,
       idusuario,
       data_criacao: new Date().toISOString()
