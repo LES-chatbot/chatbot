@@ -1,4 +1,3 @@
-// repositories/respostaRepository.js
 import { getDB } from "../config/database.js";
 
 export async function cadastrarResposta({ idmensagem_processada, conteudo, data }) {
@@ -38,7 +37,6 @@ export async function listarRespostasPorConversa(idconversa) {
   return rows;
 }
 
-// Opcional: listar resposta por idmensagem_processada
 export async function buscarRespostaPorMensagemProcessada(idmensagem_processada) {
   const db = await getDB();
 

@@ -1,4 +1,3 @@
-// repositories/mensagemProcessadaRepository.js
 import { getDB } from "../config/database.js";
 
 export async function cadastrarMensagemProcessada({ conteudo, intencao, entidades, idmensagem }) {

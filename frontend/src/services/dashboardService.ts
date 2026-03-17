@@ -18,7 +18,6 @@ export interface PerguntaRecente {
   conteudo: string
 }
 
-// -------------------- FUNÇÃO GENÉRICA DE FETCH --------------------
 async function fetchJson<T>(url: string): Promise<T> {
   const response = await fetch(url)
   const data = await response.json()

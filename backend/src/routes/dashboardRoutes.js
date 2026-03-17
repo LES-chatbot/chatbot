@@ -1,4 +1,3 @@
-// src/routes/dashboardRoute.js
 import express from "express"
 import * as dashboardController from "../controllers/dashboardController.js"
 

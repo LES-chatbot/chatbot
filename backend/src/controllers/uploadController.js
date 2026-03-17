@@ -1,5 +1,5 @@
 import { formatCpp } from "../services/formatterService.js";
-import { detectLanguage } from "../services/languageService.js";
+import { detectLanguage } from "../services/extensaoService.js";
 import { splitIntoChunks } from "../services/chunkService.js";
 import { db } from "../config/database.js";
 

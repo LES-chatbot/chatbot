@@ -1,9 +1,9 @@
 import mysql from "mysql2/promise";
 
-let db = null; // singleton
+let db = null;
 
 export async function getDB() {
-  if (db) return db; // retorna conexão existente
+  if (db) return db;
   db = await mysql.createPool({
     host: "localhost",
     user: "chatbot",
