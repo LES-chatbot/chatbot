@@ -1,7 +1,5 @@
 import { getDB } from "../config/database.js"
 
-// ----------------- ESTATÍSTICAS -----------------
-
 export async function countConversasPorUsuario(idusuario) {
   const db = await getDB()
   const [rows] = await db.query(
@@ -33,8 +31,6 @@ export async function countDocumentosPorUsuario(idusuario) {
   )
   return rows[0].total
 }
-
-// ----------------- GRÁFICOS -----------------
 
 export async function getPerguntasPorDia(idusuario) {
   const db = await getDB()

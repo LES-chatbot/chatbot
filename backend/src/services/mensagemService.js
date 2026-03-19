@@ -1,8 +1,8 @@
 import * as mensagemRepository from "../repositories/mensagemRepository.js";
 import * as conversaService from "./conversaService.js";
+import * as mensagemProcessadaService from "./mensagemProcessadaService.js";
 
 export async function enviarMensagem(mensagem) {
-
   const { conteudo, idconversa } = mensagem;
 
   if (!conteudo || conteudo.trim() === "") {
@@ -17,17 +17,22 @@ export async function enviarMensagem(mensagem) {
     conteudo,
     idconversa
   });
-  
+
   await conversaService.atualizarTituloSeNecessario(idconversa, conteudo);
+
+  const idmensagemProcessada = await mensagemProcessadaService.cadastrarMensagemProcessada({
+    conteudo,
+    idmensagem
+  });
 
   return {
     idmensagem,
+    idmensagemProcessada,
     conteudo,
     idconversa,
     data: new Date().toISOString()
   };
 }
-
 
 export async function listarMensagens(idconversa) {
 

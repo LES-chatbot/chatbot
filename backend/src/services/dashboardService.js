@@ -1,7 +1,4 @@
-// src/services/dashboardService.js
 import * as dashboardRepository from "../repositories/dashboardRepository.js"
-
-// ----------------- ESTATÍSTICAS -----------------
 
 export async function countConversas(idusuario) {
   if (!idusuario) throw new Error("ID do usuário é obrigatório")
@@ -17,8 +14,6 @@ export async function countDocumentos(idusuario) {
   if (!idusuario) throw new Error("ID do usuário é obrigatório")
   return await dashboardRepository.countDocumentosPorUsuario(idusuario)
 }
-
-// ----------------- GRÁFICOS -----------------
 
 export async function getPerguntasPorDia(idusuario) {
   if (!idusuario) throw new Error("ID do usuário é obrigatório")

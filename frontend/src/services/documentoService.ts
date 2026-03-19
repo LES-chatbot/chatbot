@@ -14,7 +14,6 @@ export interface DocumentoResponse {
   idusuario: number;
 }
 
-// Cadastrar um novo documento
 export async function cadastrarDocumento(data: DocumentoData): Promise<{ message: string; id: number }> {
   const response = await fetch("http://localhost:3000/documentos", {
     method: "POST",
@@ -31,7 +30,6 @@ export async function cadastrarDocumento(data: DocumentoData): Promise<{ message
   return responseData;
 }
 
-// Listar documentos de um usuário
 export async function listarDocumentos(idusuario: number): Promise<DocumentoResponse[]> {
   const response = await fetch(`http://localhost:3000/documentos/${idusuario}`);
   const responseData = await response.json();
@@ -43,7 +41,6 @@ export async function listarDocumentos(idusuario: number): Promise<DocumentoResp
   return responseData;
 }
 
-// Buscar um documento específico
 export async function buscarDocumento(iddocumento: number): Promise<DocumentoResponse> {
   const response = await fetch(`http://localhost:3000/documentos/doc/${iddocumento}`);
   const responseData = await response.json();
@@ -55,7 +52,6 @@ export async function buscarDocumento(iddocumento: number): Promise<DocumentoRes
   return responseData;
 }
 
-// Atualizar documento
 export async function atualizarDocumento(iddocumento: number, data: Partial<DocumentoData>): Promise<{ message: string }> {
   const response = await fetch(`http://localhost:3000/documentos/${iddocumento}`, {
     method: "PUT",
@@ -72,7 +68,6 @@ export async function atualizarDocumento(iddocumento: number, data: Partial<Docu
   return responseData;
 }
 
-// Deletar documento
 export async function deletarDocumento(iddocumento: number): Promise<{ message: string }> {
   const response = await fetch(`http://localhost:3000/documentos/${iddocumento}`, {
     method: "DELETE",

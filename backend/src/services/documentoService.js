@@ -9,20 +9,17 @@ const EXTENSOES_PERMITIDAS = ["cpp", "h", "js", "ts", "py", "java", "txt", "in",
 export async function cadastrarDocumento(documento) {
   let { titulo, linguagem, conteudo, idusuario } = documento;
 
-  // valida extensão
   if (!EXTENSOES_PERMITIDAS.includes(linguagem.toLowerCase())) {
     throw new Error(
       `Extensão .${linguagem} não permitida. Apenas: ${EXTENSOES_PERMITIDAS.join(", ")}`
     );
   }
 
-  // 1️⃣ formatar código
   if (linguagem === "cpp" || linguagem === "h") {
     conteudo = await formatCpp(conteudo);
     documento.conteudo = conteudo;
   }
 
-  // verifica se documento já existe
   const documentosExistentes =
     await documentoRepository.listarDocumentosPorUsuario(idusuario);
 
@@ -34,7 +31,6 @@ export async function cadastrarDocumento(documento) {
 
   if (docExistente) {
 
-    // atualizar documento existente
     await documentoRepository.atualizarDocumento(
       docExistente.iddocumento,
       documento
@@ -42,12 +38,9 @@ export async function cadastrarDocumento(documento) {
 
     iddocumento = docExistente.iddocumento;
 
-    // apagar chunks antigos
     await chunkRepository.deletarChunksPorDocumento(iddocumento);
 
   } else {
-
-    // criar documento novo
     iddocumento = await documentoRepository.criarDocumento(documento);
 
   }
@@ -76,7 +69,6 @@ export async function atualizarDocumento(iddocumento, dados) {
 
   let { linguagem, conteudo } = dados;
 
-  // validar extensão
   if (linguagem &&
       !EXTENSOES_PERMITIDAS.includes(linguagem.toLowerCase())) {
 
@@ -85,7 +77,6 @@ export async function atualizarDocumento(iddocumento, dados) {
     );
   }
 
-  // formatar código se necessário
   if (conteudo && linguagem &&
       ["cpp", "h"].includes(linguagem.toLowerCase())) {
 
@@ -95,15 +86,12 @@ export async function atualizarDocumento(iddocumento, dados) {
 
     dados.conteudo = conteudo;
   }
-
-  // atualizar documento
   const linhasAfetadas =
     await documentoRepository.atualizarDocumento(iddocumento, dados);
 
   if (linhasAfetadas === 0)
     throw new Error("Documento não encontrado");
 
-  // recriar chunks
   if (conteudo) {
 
     await chunkRepository.deletarChunksPorDocumento(iddocumento);
@@ -129,7 +117,6 @@ export async function atualizarDocumento(iddocumento, dados) {
 
 export async function deletarDocumento(iddocumento) {
 
-  // apagar chunks primeiro
   await chunkRepository.deletarChunksPorDocumento(iddocumento);
 
   const linhasAfetadas =
