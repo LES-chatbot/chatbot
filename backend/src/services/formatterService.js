@@ -1,9 +1,9 @@
-import { spawn } from "child_process";
+import { spawn } from "node:child_process";
 
 function preprocessCodeCpp(code) {
 
   // normalizar quebra de linha
-  code = code.replace(/\r\n/g, "\n");
+  code = code.replaceAll("\r\n", "\n");
 
   // remover comentários de linha
   code = code.replace(/\/\/.*$/gm, "");
@@ -11,17 +11,14 @@ function preprocessCodeCpp(code) {
   // remover comentários de bloco
   code = code.replace(/\/\*[\s\S]*?\*\//g, "");
 
-  // remover includes
-  // code = code.replace(/^\s*#include.*$/gm, "");
-
   // remover using namespace
   code = code.replace(/^\s*using\s+namespace\s+.*;/gm, "");
 
   // substituir tabs
-  code = code.replace(/\t/g, " ");
+  code = code.replaceAll("\t", " ");
 
   // remover espaços duplicados
-  code = code.replace(/[ ]{2,}/g, " ");
+  code = code.replace(/ {2,}/g, " ");
 
   // remover espaços nas bordas
   code = code
@@ -39,7 +36,6 @@ function preprocessCodeCpp(code) {
 }
 
 export function formatCpp(code) {
-
   return new Promise((resolve, reject) => {
 
     const cleaned = preprocessCodeCpp(code);
@@ -59,15 +55,15 @@ export function formatCpp(code) {
       error += data.toString();
     });
 
-    clang.on("close", code => {
-      if (code !== 0) reject(error);
-      else resolve(output);
+    clang.on("close", exitCode => {
+      if (exitCode === 0) {
+        resolve(output);
+      } else {
+        reject(new Error(error));
+      }
     });
 
     clang.stdin.write(cleaned);
     clang.stdin.end();
-
   });
-
 }
-
