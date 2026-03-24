@@ -6,19 +6,19 @@ function preprocessCodeCpp(code) {
   code = code.replaceAll("\r\n", "\n");
 
   // remover comentários de linha
-  code = code.replace(/\/\/.*$/gm, "");
+  code = code.replaceAll(/\/\/.*$/gm, "");
 
   // remover comentários de bloco
-  code = code.replace(/\/\*[\s\S]*?\*\//g, "");
+  code = code.replaceAll(/\/\*[\s\S]*?\*\//g, "");
 
   // remover using namespace
-  code = code.replace(/^\s*using\s+namespace\s+.*;/gm, "");
+  code = code.replaceAll(/^\s*using\s+namespace\s+.*;/gm, "");
 
   // substituir tabs
   code = code.replaceAll("\t", " ");
 
   // remover espaços duplicados
-  code = code.replace(/ {2,}/g, " ");
+  code = code.replaceAll(/ {2,}/g, " ");
 
   // remover espaços nas bordas
   code = code
@@ -27,10 +27,10 @@ function preprocessCodeCpp(code) {
     .join("\n");
 
   // juntar ";" quebrado
-  code = code.replace(/\n\s*;/g, ";");
+  code = code.replaceAll(/\n\s*;/g, ";");
 
   // remover linhas vazias duplicadas
-  code = code.replace(/\n\s*\n+/g, "\n\n");
+  code = code.replaceAll(/\n\s*\n+/g, "\n\n");
 
   return code.trim();
 }
