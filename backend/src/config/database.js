@@ -4,7 +4,7 @@ let db = null;
 
 export async function getDB() {
   if (db) return db;
-  db = await mysql.createPool({
+  db = mysql.createPool({
     host: "localhost",
     user: "chatbot",
     password: "chatbot",

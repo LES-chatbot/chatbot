@@ -237,18 +237,18 @@ async function carregarChat(idconversa: number) {
         <div className="flex-1 overflow-y-auto p-6 space-y-4 flex flex-col">
           {chat.length === 0 && <div className="text-sm text-neutral-500">Nenhuma mensagem ainda</div>}
 
-{chat.map((item) => (
-  <div
-    key={`${item.tipo}-${item.id}`} // <--- aqui a mudança
-    className={`p-4 rounded-xl max-w-xl ${
-      item.tipo === "usuario"
-        ? "bg-green-600 text-white self-end"
-        : "bg-gray-300 dark:bg-gray-700 text-black self-start"
-    }`}
-  >
-    {item.conteudo}
-  </div>
-))}
+        {chat.map((item) => (
+          <div
+            key={`${item.tipo}-${item.id}`} // <--- aqui a mudança
+            className={`p-4 rounded-xl max-w-xl ${
+              item.tipo === "usuario"
+                ? "bg-green-600 text-white self-end"
+                : "bg-gray-300 dark:bg-gray-700 text-black self-start"
+            }`}
+          >
+            {item.conteudo}
+          </div>
+        ))}
         </div>
 
         <div className="p-4 border-t border-neutral-300 dark:border-neutral-800">
