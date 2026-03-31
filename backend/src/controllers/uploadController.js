@@ -1,6 +1,6 @@
 import { formatCpp } from "../services/formatterService.js";
 import { detectLanguage } from "../services/extensaoService.js";
-import { splitIntoChunks } from "../services/chunkService.js";
+import { splitAllChunks } from "../services/chunkService.js";
 import { db } from "../config/database.js";
 
 export async function uploadFile(req, res) {
@@ -17,7 +17,7 @@ export async function uploadFile(req, res) {
       formattedContent = await formatCpp(content);
     }
 
-    const chunks = splitIntoChunks(formattedContent);
+    const chunks = splitAllChunks(formattedContent, language);
 
     await db.query(
       "INSERT INTO documents (title, language, content) VALUES (?, ?, ?)",
