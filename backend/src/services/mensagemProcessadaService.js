@@ -5,8 +5,8 @@ import * as respostaService from "./respostaService.js";
 function preprocessarMensagem(conteudo) {
   return conteudo
     .normalize("NFD") // separa acentos
-    .replaceAll(/[\u0300-\u036f]/g, "") // remove acentos
-    .replaceAll(/\s+/g, " ") // remove múltiplos espaços
+    .replace(/[\u0300-\u036f]/g, "") // remove acentos
+    .replace(/\s+/g, " ") // remove múltiplos espaços
     .trim()
     .toLowerCase();
 }

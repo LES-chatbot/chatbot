@@ -22,36 +22,13 @@ function makeChunk(tipo, conteudo, ini, fim) {
     linha_fim: fim
   };
 }
-function handleSimpleMatch(type, regex, line, lines, i, chunks) {
-  if (!regex.test(line)) return false;
-
-  chunks.push(makeChunk(type, lines[i], i + 1, i + 1));
-  return true;
-}
-
-function handleBlock(type, regex, line, lines, i, chunks, recursive = true) {
-  if (!regex.test(line)) return null;
-
-  const block = readBlock(lines, i);
-
-  chunks.push(makeChunk(
-    type,
-    block.code,
-    i + 1,
-    block.end
-  ));
-
-  if (recursive) {
-    parseBlock(lines, i + 1, block.end - 1, chunks);
-  }
-
-  return block.end;
-}
 
 function parseBlock(lines, start, end, chunks) {
+
   let i = start;
 
   while (i < end) {
+
     const line = lines[i].trim();
 
     if (!line) {
@@ -59,55 +36,118 @@ function parseBlock(lines, start, end, chunks) {
       continue;
     }
 
-    // simples
-    if (
-      handleSimpleMatch("include", /^#include/, line, lines, i, chunks) ||
-      handleSimpleMatch("macro", /^#define/, line, lines, i, chunks) ||
-      handleSimpleMatch("typedef", /^typedef/, line, lines, i, chunks)
-    ) {
+    // include
+    if (/^#include/.test(line)) {
+      chunks.push(makeChunk("include", lines[i], i + 1, i + 1));
       i++;
       continue;
     }
 
-    // blocos com recursão
-    let newIndex =
-      handleBlock("namespace", /^namespace\s+/, line, lines, i, chunks) ??
-      handleBlock("class", /^class\s+/, line, lines, i, chunks) ??
-      handleBlock("struct", /^struct\s+/, line, lines, i, chunks);
-
-    if (newIndex !== null) {
-      i = newIndex;
+    // macro
+    if (/^#define/.test(line)) {
+      chunks.push(makeChunk("macro", lines[i], i + 1, i + 1));
+      i++;
       continue;
     }
 
-    // enum (sem recursão)
-    newIndex = handleBlock("enum", /^enum\s+/, line, lines, i, chunks, false);
+    // typedef
+    if (/^typedef/.test(line)) {
+      chunks.push(makeChunk("typedef", lines[i], i + 1, i + 1));
+      i++;
+      continue;
+    }
 
-    if (newIndex !== null) {
-      i = newIndex;
+    // namespace
+    if (/^namespace\s+/.test(line)) {
+
+      const block = readBlock(lines, i);
+
+      chunks.push(makeChunk(
+        "namespace",
+        block.code,
+        i + 1,
+        block.end
+      ));
+
+      // parse dentro do namespace
+      parseBlock(lines, i + 1, block.end - 1, chunks);
+
+      i = block.end;
+      continue;
+    }
+
+    // class
+    if (/^class\s+/.test(line)) {
+
+      const block = readBlock(lines, i);
+
+      chunks.push(makeChunk(
+        "class",
+        block.code,
+        i + 1,
+        block.end
+      ));
+
+      // parse dentro da classe
+      parseBlock(lines, i + 1, block.end - 1, chunks);
+
+      i = block.end;
+      continue;
+    }
+
+    // struct
+    if (/^struct\s+/.test(line)) {
+
+      const block = readBlock(lines, i);
+
+      chunks.push(makeChunk(
+        "struct",
+        block.code,
+        i + 1,
+        block.end
+      ));
+
+      parseBlock(lines, i + 1, block.end - 1, chunks);
+
+      i = block.end;
+      continue;
+    }
+
+    // enum
+    if (/^enum\s+/.test(line)) {
+
+      const block = readBlock(lines, i);
+
+      chunks.push(makeChunk(
+        "enum",
+        block.code,
+        i + 1,
+        block.end
+      ));
+
+      i = block.end;
       continue;
     }
 
     // função
-    newIndex = handleBlock(
-      "function",
-      /^[a-zA-Z0-9_:<>~]+\s+[a-zA-Z0-9_:]+\s*\(.*\)\s*\{/,
-      line,
-      lines,
-      i,
-      chunks,
-      false
-    );
+    if (/^[a-zA-Z0-9_:<>~]+\s+[a-zA-Z0-9_:]+\s*\(.*\)\s*\{/.test(line)) {
 
-    if (newIndex !== null) {
-      i = newIndex;
+      const block = readBlock(lines, i);
+
+      chunks.push(makeChunk(
+        "function",
+        block.code,
+        i + 1,
+        block.end
+      ));
+
+      i = block.end;
       continue;
     }
 
     i++;
   }
 }
-
 function readBlock(lines, start) {
 
   let braceCount = 0;

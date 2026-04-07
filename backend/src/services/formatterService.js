@@ -1,24 +1,27 @@
-import { spawn } from "node:child_process";
+import { spawn } from "child_process";
 
 function preprocessCodeCpp(code) {
 
   // normalizar quebra de linha
-  code = code.replaceAll("\r\n", "\n");
+  code = code.replace(/\r\n/g, "\n");
 
   // remover comentários de linha
-  code = code.replaceAll(/\/\/.*$/gm, "");
+  code = code.replace(/\/\/.*$/gm, "");
 
   // remover comentários de bloco
-  code = code.replaceAll(/\/\*[\s\S]*?\*\//g, "");
+  code = code.replace(/\/\*[\s\S]*?\*\//g, "");
+
+  // remover includes
+  // code = code.replace(/^\s*#include.*$/gm, "");
 
   // remover using namespace
-  code = code.replaceAll(/^\s*using\s+namespace\s+.*;/gm, "");
+  code = code.replace(/^\s*using\s+namespace\s+.*;/gm, "");
 
   // substituir tabs
-  code = code.replaceAll("\t", " ");
+  code = code.replace(/\t/g, " ");
 
   // remover espaços duplicados
-  code = code.replaceAll(/ {2,}/g, " ");
+  code = code.replace(/[ ]{2,}/g, " ");
 
   // remover espaços nas bordas
   code = code
@@ -27,15 +30,16 @@ function preprocessCodeCpp(code) {
     .join("\n");
 
   // juntar ";" quebrado
-  code = code.replaceAll(/\n\s*;/g, ";");
+  code = code.replace(/\n\s*;/g, ";");
 
   // remover linhas vazias duplicadas
-  code = code.replaceAll(/\n\s*\n+/g, "\n\n");
+  code = code.replace(/\n\s*\n+/g, "\n\n");
 
   return code.trim();
 }
 
 export function formatCpp(code) {
+
   return new Promise((resolve, reject) => {
 
     const cleaned = preprocessCodeCpp(code);
@@ -55,15 +59,15 @@ export function formatCpp(code) {
       error += data.toString();
     });
 
-    clang.on("close", exitCode => {
-      if (exitCode === 0) {
-        resolve(output);
-      } else {
-        reject(new Error(error));
-      }
+    clang.on("close", code => {
+      if (code !== 0) reject(error);
+      else resolve(output);
     });
 
     clang.stdin.write(cleaned);
     clang.stdin.end();
+
   });
+
 }
+
