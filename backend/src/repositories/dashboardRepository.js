@@ -63,7 +63,7 @@ export async function getPerguntasRecentes(idusuario, limit = 5) {
 export async function getArquivosMaisUsados(idusuario, limit = 5) {
   const db = await getDB()
   const [rows] = await db.query(
-    `SELECT d.titulo AS name, COUNT(chr.idchunk) AS value
+    `SELECT d.nome AS name, COUNT(chr.idchunk) AS value
      FROM documento d
      LEFT JOIN chunk c ON c.iddocumento = d.iddocumento
      LEFT JOIN chunk_has_resposta chr ON chr.idchunk = c.idchunk

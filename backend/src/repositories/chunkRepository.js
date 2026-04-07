@@ -1,6 +1,7 @@
 import { getDB } from "../config/database.js";
 
 export async function criarChunk({
+  estrategia,
   tipo,
   conteudo,
   linha_ini,
@@ -11,9 +12,9 @@ export async function criarChunk({
   const db = await getDB();
 
   const [result] = await db.query(
-    `INSERT INTO chunk (tipo, conteudo, linha_ini, linha_fim, iddocumento)
-     VALUES (?, ?, ?, ?, ?)`,
-    [tipo, conteudo, linha_ini, linha_fim, iddocumento]
+    `INSERT INTO chunk (estrategia, tipo, conteudo, linha_ini, linha_fim, iddocumento)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [estrategia, tipo, conteudo, linha_ini, linha_fim, iddocumento]
   );
 
   return result.insertId;

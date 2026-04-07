@@ -1,6 +1,6 @@
 import * as documentoRepository from "../repositories/documentoRepository.js";
 import { formatCpp } from "./formatterService.js";
-import { splitIntoChunks } from "./chunkService.js";
+import { splitAllChunks } from "./chunkService.js";
 import * as chunkRepository from "../repositories/chunkRepository.js";
 
 // Lista de extensões permitidas
@@ -45,11 +45,12 @@ export async function cadastrarDocumento(documento) {
 
   }
 
-  const chunks = splitIntoChunks(conteudo, linguagem);
+  const chunks = splitAllChunks(conteudo, linguagem);
 
   for (const chunk of chunks) {
 
     await chunkRepository.criarChunk({
+      estrategia: chunk.estrategia,
       tipo: chunk.tipo,
       conteudo: chunk.conteudo,
       linha_ini: chunk.linha_ini,
@@ -96,11 +97,12 @@ export async function atualizarDocumento(iddocumento, dados) {
 
     await chunkRepository.deletarChunksPorDocumento(iddocumento);
 
-    const chunks = splitIntoChunks(conteudo, linguagem);
+    const chunks = splitAllChunks(conteudo, linguagem);
 
     for (const chunk of chunks) {
 
       await chunkRepository.criarChunk({
+        estrategia: chunk.estrategia,
         tipo: chunk.tipo,
         conteudo: chunk.conteudo,
         linha_ini: chunk.linha_ini,
