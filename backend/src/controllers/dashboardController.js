@@ -33,7 +33,7 @@ export async function getPerguntasPorDia(req, res) {
 
 export async function getArquivosMaisUsados(req, res) {
   const { idusuario } = req.params
-  const limit = req.query.limit ? Number.parseInt(req.query.limit) : 5
+  const limit = req.query.limit ? parseInt(req.query.limit) : 5
 
   try {
     const dados = await dashboardService.getArquivosMaisUsados(idusuario, limit)
@@ -46,7 +46,7 @@ export async function getArquivosMaisUsados(req, res) {
 
 export async function getPerguntasRecentes(req, res) {
   const { idusuario } = req.params
-  const limit = req.query.limit ? Number.parseInt(req.query.limit) : 5
+  const limit = req.query.limit ? parseInt(req.query.limit) : 5
 
   try {
     const dados = await dashboardService.getPerguntasRecentes(idusuario, limit)
