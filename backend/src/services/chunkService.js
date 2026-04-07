@@ -2,7 +2,7 @@ import { splitSemantic } from "./chunkers/semanticChunker.js";
 import { splitLine } from "./chunkers/lineChunker.js";
 import { splitSliding } from "./chunkers/slidingChunker.js";
 import { splitBaseline } from "./chunkers/baselineChunker.js";
-
+  
 export function splitAllChunks(conteudo, linguagem) {
   return [
     ...splitSemantic(conteudo, linguagem),
@@ -10,4 +10,3 @@ export function splitAllChunks(conteudo, linguagem) {
     ...splitSliding(conteudo),
     ...splitBaseline(conteudo)
   ];
-}
